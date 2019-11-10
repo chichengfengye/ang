@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ang.reptile.mapper.DoorTrackingMapper">
+    <sql id="insertColumns">
+         jsonstr, created_time
+    </sql>
+    <sql id="selectColumns">
+        id, jsonstr, created_time,  update_time
+    </sql>
+
+    <insert id="insertModel" parameterType="com.ang.reptile.dbmodel.DoorTrackingModel">
+        insert into door_tracking(<include refid="insertColumns"></include>)
+        values(
+            #{jsonstr}, now()
+        )
+    </insert>
+    <!--<select id="GetUserByID" parameterType="int" resultType="com.test.springtest.dao.MUser">
+        select * from `student` where id = #{id}
+    </select>
+
+    <insert
+            id="saveUser" parameterType="com.test.springtest.User"
+            useGeneratedKeys="true">
+        insert into student(NAME,AGE) values (#{name},#{age})
+    </insert>-->
+</mapper>
