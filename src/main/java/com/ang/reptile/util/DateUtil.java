@@ -1,11 +1,24 @@
 package com.ang.reptile.util;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.file.FileReader;
+import com.alibaba.fastjson.JSONObject;
+
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class DateUtil {
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static final String path = "classpath:files\\time.json";
+
+    public static TimeConfig loadTimeConfig() {
+        FileReader fileReader = new FileReader(path);
+        String timeStr = fileReader.readString();
+        JSONObject object = JSONObject.parseObject(timeStr);
+        return new TimeConfig(object.getString("startTime"), object.getString("endTime"));
+    }
 
     public static String getDateStr(Date date) {
         return simpleDateFormat.format(date);
@@ -52,7 +65,34 @@ public class DateUtil {
 
     }
 
-    public static class IntervalMap{
+    public static class TimeConfig {
+        private String startTime;
+        private String endTime;
+
+        public TimeConfig(String startTime, String endTime) {
+            this.startTime = startTime;
+            this.endTime = endTime;
+
+        }
+
+        public String getStartTime() {
+            return startTime;
+        }
+
+        public void setStartTime(String startTime) {
+            this.startTime = startTime;
+        }
+
+        public String getEndTime() {
+            return endTime;
+        }
+
+        public void setEndTime(String endTime) {
+            this.endTime = endTime;
+        }
+    }
+
+    public static class IntervalMap {
         private String start;
         private String end;
 
@@ -75,7 +115,7 @@ public class DateUtil {
 /*    public static void main(String[] args) {
         List<IntervalMap> list = getTimeIntervalItem("2019-10-15", "2019-11-20", 17);
         for (IntervalMap intervalMap : list) {
-            System.out.println(intervalMap.getStart() + " -> " + intervalMap.getEnd());
+            logger.info(intervalMap.getStart() + " -> " + intervalMap.getEnd());
 
         }
     }*/

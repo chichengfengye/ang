@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ang.reptile.mapper.SmOrderMapper">
+    <sql id="insertColumns">
+        order_id,sap_order_type,sap_order_type_desc,order_source,
+        order_item_id,status_code,status_desc,company_name,cmmdty_qa_type,
+        operate_item_dec,created_time,cmmdty_name,cmmdty_ctgry_dec,cmmdty_band_dec,
+        hope_arrival_time,operate_time,service_aptitude_dec,first_srv_time,srv_time,
+        latest_assignmengt_time,last_alloted_wd,latest_door_time,finish_time,confirm_time,
+        zyry1_bp,zyry1_bp_name,integrated_deli_flag,service_sale,wd_name,
+        account_object,wd,json_str,created_at
+    </sql>
+    <sql id="selectColumns">
+        id,order_id,sap_order_type,sap_order_type_desc,order_source,
+        order_item_id,status_code,status_desc,company_name,cmmdty_qa_type,
+        operate_item_dec,created_time,cmmdty_name,cmmdty_ctgry_dec,cmmdty_band_dec,
+        hope_arrival_time,operate_time,service_aptitude_dec,first_srv_time,srv_time,
+        latest_assignmengt_time,last_alloted_wd,latest_door_time,finish_time,confirm_time,
+        zyry1_bp,zyry1_bp_name,integrated_deli_flag,service_sale,wd_name,
+        account_object,wd,json_str,created_at,updated_at
+    </sql>
+
+    <insert id="insert" parameterType="com.ang.reptile.pojo.SmOrder">
+        insert into sm_order(<include refid="insertColumns"></include>)
+        values(
+            #{orderId},
+            #{sapOrderType},
+            #{ sapOrderTypeDesc},
+            #{ orderSource},
+            #{orderItemId},
+            #{ statusCode},
+            #{statusDesc},
+            #{ companyName},
+            #{ cmmdtyQaType},
+            #{operateItemDec},
+            #{ createdTime},
+            #{cmmdtyName},
+            #{ cmmdtyCtgryDec},
+            #{ cmmdtyBandDec},
+            #{hopeArrivalTime},
+            #{ operateTime},
+            #{serviceAptitudeDec},
+            #{ firstSrvTime},
+            #{ srvTime},
+            #{latestAssignmengtTime},
+            #{ lastAllotedWd},
+            #{latestDoorTime},
+            #{ finishTime},
+            #{ confirmTime},
+            #{zyry1Bp},
+            #{ zyry1BpName},
+            #{integratedDeliFlag},
+            #{serviceSale},
+            #{wdName},
+            #{accountObject},
+            #{wd},
+            #{jsonStr},
+            now()
+        )
+    </insert>
+    <!--<select id="GetUserByID" parameterType="int" resultType="com.test.springtest.dao.MUser">
+        select * from `student` where id = #{id}
+    </select>
+
+    <insert
+            id="saveUser" parameterType="com.test.springtest.User"
+            useGeneratedKeys="true">
+        insert into student(NAME,AGE) values (#{name},#{age})
+    </insert>-->
+</mapper>
