@@ -109,7 +109,7 @@ public class XssFExcelObj {
     public void writeRow(Iterable iterable, int sheetIndex) {
         XSSFSheet sheet = getSheet(sheetIndex);
         String sheetName = sheet.getSheetName();
-        logger.info("当前在【{}】号工作簿处理数据", sheetName);
+        logger.debug("当前在【{}】号工作簿处理数据", sheetName);
         XSSFRow row = getNextRow(sheet);
         logger.debug("增加数据到行【行号： " + sheet.getLastRowNum() + ", 工作簿： " + sheetName + "】");
         flushRowData(row, iterable);

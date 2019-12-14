@@ -1,7 +1,0 @@
-id,order_id,sap_order_type,sap_order_type_desc,order_source,
-order_item_id,status_code,status_desc,company_name,cmmdty_qa_type,
-operate_item_dec,created_time,cmmdty_name,cmmdty_ctgry_dec,cmmdty_band_dec,
-hope_arrival_time,operate_time,service_aptitude_dec,first_srv_time,srv_time,
-latest_assignmengt_time,last_alloted_wd,latest_door_time,finish_time,confirm_time,
-zyry1_bp,zyry1_bp_name,integrated_deli_flag,service_sale,wd_name,
-account_object,wd,json_str,created_at,updated_at,

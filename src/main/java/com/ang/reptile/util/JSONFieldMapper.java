@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JSONFieldMapper {
-    public static String path = "classpath:files\\fields.json";
+    public static String path = "E:\\jinfeng\\fields.json";
     private static Logger logger = LoggerFactory.getLogger(JSONFieldMapper.class);
 
     private static JSONObject mapper;
@@ -20,7 +20,6 @@ public class JSONFieldMapper {
     }
 
     public static JSONObject loadFieldsMapper() {
-//        JSONFieldMapper.class.getClassLoader().get
         FileReader fileReader = new FileReader(path);
         String result = fileReader.readString();
         JSONObject jsonObject = JSONObject.parseObject(result);

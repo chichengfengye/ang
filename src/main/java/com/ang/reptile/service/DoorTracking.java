@@ -1,23 +1,24 @@
 package com.ang.reptile.service;
 
-import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.ang.reptile.dto.DoorTrackingQueryData;
 import com.ang.reptile.exception.DBException;
 import com.ang.reptile.mapper.SmOrderMapper;
 import com.ang.reptile.model.DataBus;
 import com.ang.reptile.pojo.SmOrder;
-import com.ang.reptile.util.DataParseUtil;
-import com.ang.reptile.util.DateUtil;
-import com.ang.reptile.util.ToExcelUtil;
-import com.ang.reptile.util.UrlEncodedUtil;
+import com.ang.reptile.util.*;
+import com.ang.reptile.util.excel.obj.XssFExcelObj;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,39 +33,36 @@ public class DoorTracking {
     private static final String companyCode = "1100";
     private static final int maxTimeInterval = 17;//苏宁的借口只支持最大查询时间间隔为17天
     private static HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
-    private static final String userId = "W850057074";
-    static HashMap<String, String> cookieMap = new HashMap<>();
+//    private static final String userId = "W850057074";
+    private static HashMap<String, String> cookieMap = new HashMap<>();
 
-    static {
+/*    static {
         cookieMap.put("loginUserId", userId);
-//        cookieMap.put("rememberUserNameKey", userId);
         cookieMap.put("route", "d9eb1272b3b9b51892b23c8a4f386a9a");
         cookieMap.put("userIdKey", "663b6d166c8f4494a2691bc4952137b4");
-//        cookieMap.put("CSRF-TOKEN", "48tmdr5so8wpulh2xqwn5gk444434prv99or");
-
-/*
-        List<Cookie> cookies = new ArrayList<>();
-        for (Map.Entry<String, String> stringStringEntry : cookieMap.entrySet()) {
-            Cookie cookie = new Cookie.Builder()
-                    .domain("ases.suning.com")
-                    .name(stringStringEntry.getKey())
-                    .value(stringStringEntry.getValue())
-                    .build();
-            cookies.add(cookie);
-        }
-
-
-        cookieStore.put(new HttpUrl.Builder().host("ases.suning.com").build(), cookies);
-*/
-
-
-    }
+    }*/
 
     //查询上门跟踪的数据
+
+    /**
+     * 1. 创建excel并且追加标题头
+     * 2. 获取数据，循环插入数据到数据库和excel
+     * 3. 关闭excel
+     * @return
+     */
     public DataBus<List<String>> loopDoorTrackingData() {
-        ExcelWriter writer = ToExcelUtil.openFile();
-        ToExcelUtil.createHeaders(writer);
-//        ExcelWriter writer = null;
+        JSONObject suNingCookies = SuNingCookieFileReader.getCookies();
+
+        if (suNingCookies.isEmpty()) {
+            return DataBus.failure("没有指定苏宁的Cookie！无法获取数据！");
+        }
+
+        cookieMap.put("loginUserId", suNingCookies.getString("loginUserId"));
+        cookieMap.put("route", suNingCookies.getString("route"));
+        cookieMap.put("userIdKey", suNingCookies.getString("userIdKey"));
+
+        XssFExcelObj writer = ToExcelUtil2.openFile();
+        ToExcelUtil2.createHeaders(writer);
 
         DateUtil.TimeConfig config = DateUtil.loadTimeConfig();
         String startTime = config.getStartTime();
@@ -76,12 +74,10 @@ public class DoorTracking {
         List<String> res = new ArrayList<>();
         List<DateUtil.IntervalMap> timeItem = DateUtil.getTimeIntervalItem(startTime, endTime, maxTimeInterval);
 
-        writer = ToExcelUtil.openFile();
         for (DateUtil.IntervalMap intervalMap : timeItem) {
-            logger.info("==========开始查询时间间隔为【" + intervalMap.getStart() + " -> " + intervalMap.getEnd() + "】的数据...==========");
+            logger.debug("==========开始查询时间间隔为【" + intervalMap.getStart() + " -> " + intervalMap.getEnd() + "】的数据...==========");
             int currentPage = 0;
             int totalPage = 1;
-
 
             while (currentPage <= totalPage) {
                 currentPage += 1;
@@ -97,10 +93,10 @@ public class DoorTracking {
                     totalPage = result.getTotalPage();
                     List<String> datas = result.getDatas();
 
-                    logger.info("========= 获取{}条记录==========", datas.size());
+                    logger.debug("========= 获取{}条记录==========", datas.size());
                     allDataSize += datas.size();
                     try {
-                        logger.info("=============开始插入数据库，一共{}条==============", datas.size());
+                        logger.debug("=============开始插入数据库，一共{}条==============", datas.size());
                         insertSmOrderByString(datas);
                         allDBItemSize += datas.size();
                         logger.info("========= 插入数据库成功，共插入{}条记录==========", datas.size());
@@ -108,19 +104,20 @@ public class DoorTracking {
                     } catch (Exception e) {
                         logger.error("============== 插入数据库失败！=================");
                         e.printStackTrace();
-//                        ToExcelUtil.close(writer);
+                        ToExcelUtil2.close(writer);
                         return DataBus.failure();
                     }
 
                     //excel
                     try {
-                        ToExcelUtil.toExcel(writer, datas, false);
+                        ToExcelUtil2.toExcel(writer, datas, false);
+                        logger.info("========= 插入excel成功，共插入{}条记录==========", datas.size());
                     } catch (Exception e) {
                         logger.error("插入excel错误！");
                         e.printStackTrace();
                     }
 
-                    logger.info("============= 写入excel成功！写入{}条=====================", datas.size());
+                    logger.debug("============= 写入excel成功！写入{}条=====================", datas.size());
                     allExcelRowSize += datas.size();
                 }
             }
@@ -135,7 +132,7 @@ public class DoorTracking {
         dataBus.setData(res);
 
         //关闭流
-        ToExcelUtil.close(writer);
+        ToExcelUtil2.close(writer);
         return dataBus;
     }
 

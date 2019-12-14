@@ -11,7 +11,7 @@ import java.util.*;
 
 public class DateUtil {
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private static final String path = "classpath:files\\time.json";
+    private static final String path = "E:\\jinfeng\\time.json";
 
     public static TimeConfig loadTimeConfig() {
         FileReader fileReader = new FileReader(path);
@@ -115,7 +115,7 @@ public class DateUtil {
 /*    public static void main(String[] args) {
         List<IntervalMap> list = getTimeIntervalItem("2019-10-15", "2019-11-20", 17);
         for (IntervalMap intervalMap : list) {
-            logger.info(intervalMap.getStart() + " -> " + intervalMap.getEnd());
+            logger.debug(intervalMap.getStart() + " -> " + intervalMap.getEnd());
 
         }
     }*/

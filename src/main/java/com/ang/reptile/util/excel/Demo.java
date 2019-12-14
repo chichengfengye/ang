@@ -1,7 +1,7 @@
 package com.ang.reptile.util.excel;
 
 import com.alibaba.fastjson.JSONObject;
-import com.imooc.demo.utils.excel.obj.XssFExcelObj;
+import com.ang.reptile.util.excel.obj.XssFExcelObj;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -10,10 +10,10 @@ import java.util.List;
 public class Demo {
     public static void main(String[] args) {
         addContentAndArrayData();
-        System.out.println("==================================");
-        addContentAndJSONData();
-        System.out.println("==================================");
-        addContentAndJSONHeadersAndJSONData();
+//        System.out.println("==================================");
+//        addContentAndJSONData();
+//        System.out.println("==================================");
+//        addContentAndJSONHeadersAndJSONData();
     }
 
     public static void addContentAndJSONHeadersAndJSONData() {
@@ -98,7 +98,7 @@ public class Demo {
     public static void addContentAndArrayData() {
         //1. 加载（创建）文件
         try {
-            XssFExcelObj xssFExcelObj = XSSFExcelBuilder.load("G:\\test1.xlsx");
+            XssFExcelObj xssFExcelObj = XSSFExcelBuilder.load("E:\\test1.xlsx");
 //        JSONObject headers = new JSONObject();
             if (xssFExcelObj != null) {
                 //2.添加标题头
@@ -117,8 +117,9 @@ public class Demo {
                     datas.add(data);
                     xssFExcelObj.writeRow(data, 0);//逐行添加测试通过
                 }
-
-                xssFExcelObj.writeRows(datas, 0);//一次性添加测试通过
+                List<String> data = new ArrayList<>();
+                xssFExcelObj.writeRow(data, 0);//逐行添加测试通过
+//                xssFExcelObj.writeRows(datas, 0);//一次性添加测试通过
 
                 //4.关闭xssFExcelObj
                 xssFExcelObj.close();
